@@ -44,7 +44,7 @@ public class Particle {
         }
         this.position = position;
         this.team = team;
-        this.energy = energy; // Don't clamp yet, allow checking isDead first
+        setEnergy(energy); // Use setter to apply clamping
     }
     
     /**
@@ -99,13 +99,15 @@ public class Particle {
     }
     
     /**
-     * Sets energy. Values below MIN_ENERGY are allowed (for death checking).
+     * Sets energy, clamped to valid range.
+     * Allows energy to reach 0 (for death), but not go negative.
      * 
      * @param energy new energy value
      */
     public void setEnergy(int energy) {
-        // Clamp to MAX but allow going below MIN (for death)
-        this.energy = Math.min(MAX_ENERGY, energy);
+        // Clamp to range [0, MAX_ENERGY]
+        // 0 is allowed for death, but not negative
+        this.energy = Math.max(0, Math.min(MAX_ENERGY, energy));
     }
     
     /**
