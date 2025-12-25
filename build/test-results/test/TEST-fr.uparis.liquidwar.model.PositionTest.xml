@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="fr.uparis.liquidwar.model.PositionTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2025-12-25T11:18:11" hostname="DESKTOP-9F04V5D" time="0.069">
+<testsuite name="fr.uparis.liquidwar.model.PositionTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2025-12-25T11:33:27" hostname="DESKTOP-9F04V5D" time="0.031">
   <properties/>
-  <testcase name="Add offset creates new position correctly" classname="fr.uparis.liquidwar.model.PositionTest" time="0.003"/>
-  <testcase name="Edge positions are handled correctly" classname="fr.uparis.liquidwar.model.PositionTest" time="0.002"/>
-  <testcase name="toString returns readable format" classname="fr.uparis.liquidwar.model.PositionTest" time="0.009"/>
+  <testcase name="Add offset creates new position correctly" classname="fr.uparis.liquidwar.model.PositionTest" time="0.001"/>
+  <testcase name="Edge positions are handled correctly" classname="fr.uparis.liquidwar.model.PositionTest" time="0.001"/>
+  <testcase name="toString returns readable format" classname="fr.uparis.liquidwar.model.PositionTest" time="0.003"/>
   <testcase name="isInBounds returns false for out of bounds positions" classname="fr.uparis.liquidwar.model.PositionTest" time="0.001"/>
-  <testcase name="Positions with same coordinates are equal" classname="fr.uparis.liquidwar.model.PositionTest" time="0.003"/>
-  <testcase name="Position creation works correctly" classname="fr.uparis.liquidwar.model.PositionTest" time="0.001"/>
+  <testcase name="Positions with same coordinates are equal" classname="fr.uparis.liquidwar.model.PositionTest" time="0.002"/>
+  <testcase name="Position creation works correctly" classname="fr.uparis.liquidwar.model.PositionTest" time="0.005"/>
   <testcase name="Manhattan distance calculation is correct" classname="fr.uparis.liquidwar.model.PositionTest" time="0.001"/>
-  <testcase name="Manhattan distance to self is zero" classname="fr.uparis.liquidwar.model.PositionTest" time="0.001"/>
-  <testcase name="Euclidean distance calculation is correct" classname="fr.uparis.liquidwar.model.PositionTest" time="0.009"/>
-  <testcase name="isInBounds returns true for valid positions" classname="fr.uparis.liquidwar.model.PositionTest" time="0.002"/>
+  <testcase name="Manhattan distance to self is zero" classname="fr.uparis.liquidwar.model.PositionTest" time="0.002"/>
+  <testcase name="Euclidean distance calculation is correct" classname="fr.uparis.liquidwar.model.PositionTest" time="0.002"/>
+  <testcase name="isInBounds returns true for valid positions" classname="fr.uparis.liquidwar.model.PositionTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
