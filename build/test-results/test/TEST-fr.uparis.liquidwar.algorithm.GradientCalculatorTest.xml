@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2025-12-25T21:42:53" hostname="DESKTOP-9F04V5D" time="0.131">
+<testsuite name="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2025-12-25T21:59:40" hostname="DESKTOP-9F04V5D" time="0.186">
   <properties/>
-  <testcase name="Calculator creation works" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.064"/>
-  <testcase name="Null team throws exception" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.004"/>
-  <testcase name="Target position has distance 0" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.009"/>
-  <testcase name="isReachable works correctly" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.003"/>
-  <testcase name="Obstacles are unreachable" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.003"/>
-  <testcase name="Adjacent cells have correct distance" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.002"/>
+  <testcase name="Calculator creation works" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.096"/>
+  <testcase name="Null team throws exception" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.005"/>
+  <testcase name="Target position has distance 0" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.013"/>
+  <testcase name="isReachable works correctly" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.008"/>
+  <testcase name="Obstacles are unreachable" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.009"/>
+  <testcase name="Adjacent cells have correct distance" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.003"/>
   <testcase name="Distance increases with path length" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.002"/>
   <testcase name="Simple gradient calculation works" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.001"/>
   <testcase name="Diagonal cells have higher cost" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.002"/>
-  <testcase name="Target on obstacle returns empty gradient" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.001"/>
+  <testcase name="Target on obstacle returns empty gradient" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.002"/>
   <testcase name="Gradient covers entire reachable area" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.002"/>
   <testcase name="Null board throws exception" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.001"/>
-  <testcase name="getDistance returns correct value" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.003"/>
+  <testcase name="getDistance returns correct value" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.004"/>
   <testcase name="Walls block pathfinding" classname="fr.uparis.liquidwar.algorithm.GradientCalculatorTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="fr.uparis.liquidwar.model.TeamTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2025-12-25T21:42:53" hostname="DESKTOP-9F04V5D" time="0.028">
+<testsuite name="fr.uparis.liquidwar.model.TeamTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2025-12-25T21:59:41" hostname="DESKTOP-9F04V5D" time="0.05">
   <properties/>
-  <testcase name="Team creation works correctly" classname="fr.uparis.liquidwar.model.TeamTest" time="0.0"/>
-  <testcase name="Removing particles works" classname="fr.uparis.liquidwar.model.TeamTest" time="0.001"/>
+  <testcase name="Team creation works correctly" classname="fr.uparis.liquidwar.model.TeamTest" time="0.002"/>
+  <testcase name="Removing particles works" classname="fr.uparis.liquidwar.model.TeamTest" time="0.003"/>
   <testcase name="Particle color varies with energy" classname="fr.uparis.liquidwar.model.TeamTest" time="0.001"/>
-  <testcase name="toString returns readable format" classname="fr.uparis.liquidwar.model.TeamTest" time="0.001"/>
+  <testcase name="toString returns readable format" classname="fr.uparis.liquidwar.model.TeamTest" time="0.002"/>
   <testcase name="Adding particles works" classname="fr.uparis.liquidwar.model.TeamTest" time="0.001"/>
   <testcase name="Cannot add particle from different team" classname="fr.uparis.liquidwar.model.TeamTest" time="0.002"/>
-  <testcase name="Setting target position works" classname="fr.uparis.liquidwar.model.TeamTest" time="0.001"/>
+  <testcase name="Setting target position works" classname="fr.uparis.liquidwar.model.TeamTest" time="0.0"/>
   <testcase name="Adding same particle twice doesn't duplicate" classname="fr.uparis.liquidwar.model.TeamTest" time="0.0"/>
-  <testcase name="Null checks throw exceptions" classname="fr.uparis.liquidwar.model.TeamTest" time="0.002"/>
-  <testcase name="Particles list is unmodifiable" classname="fr.uparis.liquidwar.model.TeamTest" time="0.001"/>
+  <testcase name="Null checks throw exceptions" classname="fr.uparis.liquidwar.model.TeamTest" time="0.009"/>
+  <testcase name="Particles list is unmodifiable" classname="fr.uparis.liquidwar.model.TeamTest" time="0.002"/>
   <testcase name="Team is inactive when no particles" classname="fr.uparis.liquidwar.model.TeamTest" time="0.001"/>
-  <testcase name="Total energy calculation is correct" classname="fr.uparis.liquidwar.model.TeamTest" time="0.003"/>
+  <testcase name="Total energy calculation is correct" classname="fr.uparis.liquidwar.model.TeamTest" time="0.008"/>
   <testcase name="Teams with same ID are equal" classname="fr.uparis.liquidwar.model.TeamTest" time="0.001"/>
   <testcase name="Team is inactive when setActive(false)" classname="fr.uparis.liquidwar.model.TeamTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
