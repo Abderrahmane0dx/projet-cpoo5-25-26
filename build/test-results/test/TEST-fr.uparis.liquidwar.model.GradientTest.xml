@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="fr.uparis.liquidwar.model.GradientTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2025-12-25T11:33:26" hostname="DESKTOP-9F04V5D" time="0.157">
+<testsuite name="fr.uparis.liquidwar.model.GradientTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2025-12-25T21:42:53" hostname="DESKTOP-9F04V5D" time="0.033">
   <properties/>
-  <testcase name="All distances initialized to INFINITE" classname="fr.uparis.liquidwar.model.GradientTest" time="0.062"/>
-  <testcase name="Large distance values work correctly" classname="fr.uparis.liquidwar.model.GradientTest" time="0.007"/>
-  <testcase name="copyFrom() with incompatible dimensions throws exception" classname="fr.uparis.liquidwar.model.GradientTest" time="0.004"/>
-  <testcase name="reset() clears all distances to INFINITE" classname="fr.uparis.liquidwar.model.GradientTest" time="0.002"/>
+  <testcase name="All distances initialized to INFINITE" classname="fr.uparis.liquidwar.model.GradientTest" time="0.002"/>
+  <testcase name="Large distance values work correctly" classname="fr.uparis.liquidwar.model.GradientTest" time="0.001"/>
+  <testcase name="copyFrom() with incompatible dimensions throws exception" classname="fr.uparis.liquidwar.model.GradientTest" time="0.001"/>
+  <testcase name="reset() clears all distances to INFINITE" classname="fr.uparis.liquidwar.model.GradientTest" time="0.001"/>
   <testcase name="Null team throws exception" classname="fr.uparis.liquidwar.model.GradientTest" time="0.002"/>
-  <testcase name="toString returns readable format" classname="fr.uparis.liquidwar.model.GradientTest" time="0.026"/>
+  <testcase name="toString returns readable format" classname="fr.uparis.liquidwar.model.GradientTest" time="0.003"/>
   <testcase name="Gradient creation works correctly" classname="fr.uparis.liquidwar.model.GradientTest" time="0.002"/>
-  <testcase name="Distance at target position can be zero" classname="fr.uparis.liquidwar.model.GradientTest" time="0.003"/>
-  <testcase name="Setting distance out of bounds does nothing" classname="fr.uparis.liquidwar.model.GradientTest" time="0.004"/>
-  <testcase name="Out of bounds returns INFINITE" classname="fr.uparis.liquidwar.model.GradientTest" time="0.002"/>
-  <testcase name="isReachable() works correctly" classname="fr.uparis.liquidwar.model.GradientTest" time="0.002"/>
-  <testcase name="Invalid gradient dimensions throw exception" classname="fr.uparis.liquidwar.model.GradientTest" time="0.001"/>
-  <testcase name="isReachable() with Position works" classname="fr.uparis.liquidwar.model.GradientTest" time="0.002"/>
-  <testcase name="copyFrom() copies distances correctly" classname="fr.uparis.liquidwar.model.GradientTest" time="0.002"/>
+  <testcase name="Distance at target position can be zero" classname="fr.uparis.liquidwar.model.GradientTest" time="0.001"/>
+  <testcase name="Setting distance out of bounds does nothing" classname="fr.uparis.liquidwar.model.GradientTest" time="0.001"/>
+  <testcase name="Out of bounds returns INFINITE" classname="fr.uparis.liquidwar.model.GradientTest" time="0.001"/>
+  <testcase name="isReachable() works correctly" classname="fr.uparis.liquidwar.model.GradientTest" time="0.0"/>
+  <testcase name="Invalid gradient dimensions throw exception" classname="fr.uparis.liquidwar.model.GradientTest" time="0.002"/>
+  <testcase name="isReachable() with Position works" classname="fr.uparis.liquidwar.model.GradientTest" time="0.001"/>
+  <testcase name="copyFrom() copies distances correctly" classname="fr.uparis.liquidwar.model.GradientTest" time="0.0"/>
   <testcase name="Setting and getting distance works" classname="fr.uparis.liquidwar.model.GradientTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

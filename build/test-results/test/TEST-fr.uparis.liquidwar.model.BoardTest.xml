@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="fr.uparis.liquidwar.model.BoardTest" tests="17" skipped="0" failures="0" errors="0" timestamp="2025-12-25T21:42:53" hostname="DESKTOP-9F04V5D" time="0.05">
+  <properties/>
+  <testcase name="Board creation works correctly" classname="fr.uparis.liquidwar.model.BoardTest" time="0.001"/>
+  <testcase name="createRandomObstacles respects density" classname="fr.uparis.liquidwar.model.BoardTest" time="0.003"/>
+  <testcase name="Setting and getting particles works" classname="fr.uparis.liquidwar.model.BoardTest" time="0.001"/>
+  <testcase name="toString returns readable format" classname="fr.uparis.liquidwar.model.BoardTest" time="0.01"/>
+  <testcase name="isInBounds with Position works" classname="fr.uparis.liquidwar.model.BoardTest" time="0.0"/>
+  <testcase name="Setting and checking obstacles works" classname="fr.uparis.liquidwar.model.BoardTest" time="0.001"/>
+  <testcase name="createBorderWalls creates walls on edges" classname="fr.uparis.liquidwar.model.BoardTest" time="0.001"/>
+  <testcase name="Invalid board dimensions throw exception" classname="fr.uparis.liquidwar.model.BoardTest" time="0.002"/>
+  <testcase name="Cannot move to obstacle" classname="fr.uparis.liquidwar.model.BoardTest" time="0.001"/>
+  <testcase name="Invalid density throws exception" classname="fr.uparis.liquidwar.model.BoardTest" time="0.003"/>
+  <testcase name="Cannot move out of bounds" classname="fr.uparis.liquidwar.model.BoardTest" time="0.0"/>
+  <testcase name="getAllParticles returns all particles" classname="fr.uparis.liquidwar.model.BoardTest" time="0.001"/>
+  <testcase name="Setting particle updates its position" classname="fr.uparis.liquidwar.model.BoardTest" time="0.001"/>
+  <testcase name="isFree works correctly" classname="fr.uparis.liquidwar.model.BoardTest" time="0.0"/>
+  <testcase name="Out of bounds positions are treated as obstacles" classname="fr.uparis.liquidwar.model.BoardTest" time="0.001"/>
+  <testcase name="isInBounds works correctly" classname="fr.uparis.liquidwar.model.BoardTest" time="0.0"/>
+  <testcase name="Moving particles works" classname="fr.uparis.liquidwar.model.BoardTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
