@@ -49,7 +49,8 @@ class ParticleTest {
         assertEquals(Particle.MAX_ENERGY, p.getEnergy());
         
         p.setEnergy(-50);
-        assertEquals(Particle.MIN_ENERGY, p.getEnergy());
+        // Energy can be 0 (for death), but setEnergy clamps to 0 minimum
+        assertEquals(0, p.getEnergy());
     }
     
     @Test
