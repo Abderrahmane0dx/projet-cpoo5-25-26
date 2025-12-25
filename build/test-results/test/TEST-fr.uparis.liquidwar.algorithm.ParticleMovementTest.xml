@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="fr.uparis.liquidwar.algorithm.ParticleMovementTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2025-12-25T21:42:53" hostname="DESKTOP-9F04V5D" time="0.045">
+  <properties/>
+  <testcase name="Movement creation works" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.001"/>
+  <testcase name="canMove returns false when completely blocked" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.002"/>
+  <testcase name="getBestDirection returns correct direction" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.002"/>
+  <testcase name="Particle attacks enemy in path" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.001"/>
+  <testcase name="getBestDirection returns null when surrounded" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.003"/>
+  <testcase name="Particle prefers main direction over good direction" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.003"/>
+  <testcase name="Particle heals ally when blocked" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.001"/>
+  <testcase name="canMove returns true when space available" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.001"/>
+  <testcase name="Particle doesn't move if at target" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.014"/>
+  <testcase name="Null gradient returns false" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.0"/>
+  <testcase name="Particle moves toward target" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.001"/>
+  <testcase name="Null board throws exception" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.002"/>
+  <testcase name="Null particle returns false" classname="fr.uparis.liquidwar.algorithm.ParticleMovementTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

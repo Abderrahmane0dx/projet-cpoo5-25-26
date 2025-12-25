@@ -3,17 +3,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=edge"/>
-<title>Test results - GradientTest</title>
+<title>Test results - GradientCalculatorTest</title>
 <link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
 <link href="../css/style.css" rel="stylesheet" type="text/css"/>
 <script src="../js/report.js" type="text/javascript"></script>
 </head>
 <body>
 <div id="content">
-<h1>GradientTest</h1>
+<h1>GradientCalculatorTest</h1>
 <div class="breadcrumbs">
 <a href="../index.html">all</a> &gt; 
-<a href="../packages/fr.uparis.liquidwar.model.html">fr.uparis.liquidwar.model</a> &gt; GradientTest</div>
+<a href="../packages/fr.uparis.liquidwar.algorithm.html">fr.uparis.liquidwar.algorithm</a> &gt; GradientCalculatorTest</div>
 <div id="summary">
 <table>
 <tr>
@@ -23,7 +23,7 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">15</div>
+<div class="counter">14</div>
 <p>tests</p>
 </div>
 </td>
@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.019s</div>
+<div class="counter">0.099s</div>
 <p>duration</p>
 </div>
 </td>
@@ -76,93 +76,87 @@
 </tr>
 </thead>
 <tr>
-<td class="success">copyFrom() copies distances correctly</td>
-<td class="success">testCopyFrom()</td>
-<td class="success">0s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">copyFrom() with incompatible dimensions throws exception</td>
-<td class="success">testCopyFromIncompatible()</td>
-<td class="success">0.001s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">Gradient creation works correctly</td>
-<td class="success">testGradientCreation()</td>
+<td class="success">Adjacent cells have correct distance</td>
+<td class="success">testAdjacentCells()</td>
 <td class="success">0.002s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">All distances initialized to INFINITE</td>
-<td class="success">testInitializedToInfinite()</td>
+<td class="success">Calculator creation works</td>
+<td class="success">testCreation()</td>
+<td class="success">0.064s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Diagonal cells have higher cost</td>
+<td class="success">testDiagonalCells()</td>
 <td class="success">0.002s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">Invalid gradient dimensions throw exception</td>
-<td class="success">testInvalidDimensions()</td>
+<td class="success">Distance increases with path length</td>
+<td class="success">testDistanceIncreases()</td>
 <td class="success">0.002s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">isReachable() works correctly</td>
+<td class="success">getDistance returns correct value</td>
+<td class="success">testGetDistance()</td>
+<td class="success">0.003s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Gradient covers entire reachable area</td>
+<td class="success">testGradientCoverage()</td>
+<td class="success">0.002s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">isReachable works correctly</td>
 <td class="success">testIsReachable()</td>
-<td class="success">0s</td>
+<td class="success">0.003s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">isReachable() with Position works</td>
-<td class="success">testIsReachablePosition()</td>
-<td class="success">0.001s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">Large distance values work correctly</td>
-<td class="success">testLargeDistances()</td>
+<td class="success">Null board throws exception</td>
+<td class="success">testNullBoard()</td>
 <td class="success">0.001s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
 <td class="success">Null team throws exception</td>
 <td class="success">testNullTeam()</td>
-<td class="success">0.002s</td>
+<td class="success">0.004s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">Out of bounds returns INFINITE</td>
-<td class="success">testOutOfBoundsReturnsInfinite()</td>
-<td class="success">0.001s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">reset() clears all distances to INFINITE</td>
-<td class="success">testReset()</td>
-<td class="success">0.001s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">Setting and getting distance works</td>
-<td class="success">testSetAndGetDistance()</td>
-<td class="success">0.001s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">Setting distance out of bounds does nothing</td>
-<td class="success">testSetDistanceOutOfBounds()</td>
-<td class="success">0.001s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">toString returns readable format</td>
-<td class="success">testToString()</td>
+<td class="success">Obstacles are unreachable</td>
+<td class="success">testObstaclesUnreachable()</td>
 <td class="success">0.003s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">Distance at target position can be zero</td>
-<td class="success">testZeroDistance()</td>
+<td class="success">Simple gradient calculation works</td>
+<td class="success">testSimpleCalculation()</td>
 <td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Target position has distance 0</td>
+<td class="success">testTargetHasZeroDistance()</td>
+<td class="success">0.009s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Target on obstacle returns empty gradient</td>
+<td class="success">testTargetOnObstacle()</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Walls block pathfinding</td>
+<td class="success">testWallsBlock()</td>
+<td class="success">0.002s</td>
 <td class="success">passed</td>
 </tr>
 </table>

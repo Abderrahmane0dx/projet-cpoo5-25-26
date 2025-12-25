@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="fr.uparis.liquidwar.model.ParticleTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2025-12-25T11:33:26" hostname="DESKTOP-9F04V5D" time="0.078">
+<testsuite name="fr.uparis.liquidwar.model.ParticleTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2025-12-25T21:42:53" hostname="DESKTOP-9F04V5D" time="0.029">
   <properties/>
-  <testcase name="Heal transfers energy correctly" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.002"/>
+  <testcase name="Heal transfers energy correctly" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
   <testcase name="Cannot heal enemy" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
-  <testcase name="Attack converts particle when energy drops to zero" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.003"/>
-  <testcase name="Particle creation with default energy works" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.025"/>
-  <testcase name="Particle creation with custom energy works" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.004"/>
-  <testcase name="Null checks throw exceptions" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.002"/>
-  <testcase name="Energy is clamped to valid range" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
-  <testcase name="Attack transfers energy correctly" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.002"/>
+  <testcase name="Attack converts particle when energy drops to zero" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
+  <testcase name="Particle creation with default energy works" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.002"/>
+  <testcase name="Particle creation with custom energy works" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
+  <testcase name="Null checks throw exceptions" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
+  <testcase name="Energy is clamped to valid range" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.0"/>
+  <testcase name="Attack transfers energy correctly" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
   <testcase name="isDead returns true when energy is zero or below" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
-  <testcase name="Cannot attack ally" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.002"/>
+  <testcase name="Cannot attack ally" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.0"/>
   <testcase name="Team conversion works correctly" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
   <testcase name="Energy ratio calculation is correct" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>
   <testcase name="Cannot heal when at minimum energy" classname="fr.uparis.liquidwar.model.ParticleTest" time="0.001"/>

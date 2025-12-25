@@ -3,17 +3,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=edge"/>
-<title>Test results - DirectionTest</title>
+<title>Test results - ParticleMovementTest</title>
 <link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
 <link href="../css/style.css" rel="stylesheet" type="text/css"/>
 <script src="../js/report.js" type="text/javascript"></script>
 </head>
 <body>
 <div id="content">
-<h1>DirectionTest</h1>
+<h1>ParticleMovementTest</h1>
 <div class="breadcrumbs">
 <a href="../index.html">all</a> &gt; 
-<a href="../packages/fr.uparis.liquidwar.util.html">fr.uparis.liquidwar.util</a> &gt; DirectionTest</div>
+<a href="../packages/fr.uparis.liquidwar.algorithm.html">fr.uparis.liquidwar.algorithm</a> &gt; ParticleMovementTest</div>
 <div id="summary">
 <table>
 <tr>
@@ -23,7 +23,7 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">8</div>
+<div class="counter">13</div>
 <p>tests</p>
 </div>
 </td>
@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.011s</div>
+<div class="counter">0.033s</div>
 <p>duration</p>
 </div>
 </td>
@@ -76,51 +76,81 @@
 </tr>
 </thead>
 <tr>
-<td class="success">All 8 directions exist</td>
-<td class="success">testAllDirectionsExist()</td>
-<td class="success">0s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">Apply direction to coordinates works</td>
-<td class="success">testApplyToCoordinates()</td>
+<td class="success">Particle attacks enemy in path</td>
+<td class="success">testAttackEnemy()</td>
 <td class="success">0.001s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">Apply direction to Position works</td>
-<td class="success">testApplyToPosition()</td>
+<td class="success">getBestDirection returns null when surrounded</td>
+<td class="success">testBestDirectionWhenSurrounded()</td>
+<td class="success">0.003s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">canMove returns true when space available</td>
+<td class="success">testCanMove()</td>
 <td class="success">0.001s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">Direction offsets are correct</td>
-<td class="success">testDirectionOffsets()</td>
-<td class="success">0.004s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">Cardinal directions are identified correctly</td>
-<td class="success">testIsCardinal()</td>
-<td class="success">0.001s</td>
-<td class="success">passed</td>
-</tr>
-<tr>
-<td class="success">Diagonal directions are identified correctly</td>
-<td class="success">testIsDiagonal()</td>
+<td class="success">canMove returns false when completely blocked</td>
+<td class="success">testCannotMove()</td>
 <td class="success">0.002s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">Opposite directions are correct</td>
-<td class="success">testOpposite()</td>
+<td class="success">Movement creation works</td>
+<td class="success">testCreation()</td>
 <td class="success">0.001s</td>
 <td class="success">passed</td>
 </tr>
 <tr>
-<td class="success">Applying opposite direction returns to start</td>
-<td class="success">testOppositeReturnsToStart()</td>
+<td class="success">Particle prefers main direction over good direction</td>
+<td class="success">testDirectionPriority()</td>
+<td class="success">0.003s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">getBestDirection returns correct direction</td>
+<td class="success">testGetBestDirection()</td>
+<td class="success">0.002s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Particle heals ally when blocked</td>
+<td class="success">testHealAlly()</td>
 <td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Particle moves toward target</td>
+<td class="success">testMoveTowardTarget()</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Particle doesn't move if at target</td>
+<td class="success">testNoMoveAtTarget()</td>
+<td class="success">0.014s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Null board throws exception</td>
+<td class="success">testNullBoard()</td>
+<td class="success">0.002s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Null gradient returns false</td>
+<td class="success">testNullGradient()</td>
+<td class="success">0s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">Null particle returns false</td>
+<td class="success">testNullParticle()</td>
+<td class="success">0.002s</td>
 <td class="success">passed</td>
 </tr>
 </table>
