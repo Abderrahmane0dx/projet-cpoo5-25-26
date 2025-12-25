@@ -91,6 +91,8 @@ public class Team {
         }
         if (!particles.contains(particle)) {
             particles.add(particle);
+            // Ensure team is active when a particle is added
+            this.active = true;
         }
     }
     
@@ -101,6 +103,10 @@ public class Team {
      */
     public void removeParticle(Particle particle) {
         particles.remove(particle);
+        // This fix addresses "Team is inactive when no particles"
+        if (particles.isEmpty()) {
+            this.active = false;
+        }
     }
     
     /**
@@ -114,7 +120,7 @@ public class Team {
      * @return true if team is active (has particles)
      */
     public boolean isActive() {
-        return active && !particles.isEmpty();
+        return this.active;
     }
     
     /**
