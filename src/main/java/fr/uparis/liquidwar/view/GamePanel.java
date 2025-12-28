@@ -8,87 +8,47 @@ import fr.uparis.liquidwar.model.Team;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.Stop;
 
 import java.util.Map;
 
 /**
- * JavaFX Canvas that renders the Liquid War game.
- * Displays particles, obstacles, and team cursors.
+ * Modern game panel with organic obstacles.
  */
 public class GamePanel extends Canvas {
-    private static final int CELL_SIZE = 4; // Size of each pixel/cell
-    private static final Color BACKGROUND_COLOR = Color.BLACK;
-    private static final Color OBSTACLE_COLOR = Color.DARKGRAY;
-    private static final Color CURSOR_COLOR = Color.YELLOW;
-    private static final int CURSOR_SIZE = 8;
+    private static final int CELL_SIZE = 4;
+    private static final Color BACKGROUND_COLOR = Color.rgb(5, 5, 10);
     
     private Board board;
     private Map<Team, Gradient> gradients;
-    private boolean showGradient = false;
-    private Team gradientTeam = null;
     
-    /**
-     * Creates a game panel for a board.
-     * 
-     * @param board the game board
-     */
     public GamePanel(Board board) {
         super(board.getWidth() * CELL_SIZE, board.getHeight() * CELL_SIZE);
         this.board = board;
-        
-        // Enable mouse events
         setFocusTraversable(true);
-        
         render();
     }
     
-    /**
-     * Sets the board to display.
-     * 
-     * @param board new board
-     */
     public void setBoard(Board board) {
         this.board = board;
         setWidth(board.getWidth() * CELL_SIZE);
         setHeight(board.getHeight() * CELL_SIZE);
     }
     
-    /**
-     * Sets the gradients for visualization.
-     * 
-     * @param gradients map of team gradients
-     */
     public void setGradients(Map<Team, Gradient> gradients) {
         this.gradients = gradients;
     }
     
-    /**
-     * Toggles gradient visualization.
-     * 
-     * @param show true to show gradient
-     * @param team team whose gradient to show (null to hide)
-     */
-    public void setShowGradient(boolean show, Team team) {
-        this.showGradient = show;
-        this.gradientTeam = team;
-    }
-    
-    /**
-     * Renders the entire game state.
-     */
     public void render() {
         GraphicsContext gc = getGraphicsContext2D();
         
-        // Clear background
+        // Very dark background
         gc.setFill(BACKGROUND_COLOR);
         gc.fillRect(0, 0, getWidth(), getHeight());
         
-        // Draw gradient if enabled
-        if (showGradient && gradientTeam != null && gradients != null) {
-            drawGradient(gc, gradients.get(gradientTeam));
-        }
-        
-        // Draw obstacles
+        // Draw obstacles with organic shapes
         drawObstacles(gc);
         
         // Draw particles
@@ -102,116 +62,126 @@ public class GamePanel extends Canvas {
         }
     }
     
-    /**
-     * Draws obstacles on the board.
-     */
     private void drawObstacles(GraphicsContext gc) {
-        gc.setFill(OBSTACLE_COLOR);
-        
+        // Draw obstacles with smooth, organic shapes
         for (int y = 0; y < board.getHeight(); y++) {
             for (int x = 0; x < board.getWidth(); x++) {
                 if (board.isObstacle(x, y)) {
-                    gc.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    drawOrganicObstacle(gc, x, y);
                 }
             }
         }
     }
     
-    /**
-     * Draws all particles with colors based on energy.
-     */
+    private void drawOrganicObstacle(GraphicsContext gc, int x, int y) {
+        double px = x * CELL_SIZE;
+        double py = y * CELL_SIZE;
+        
+        // Soft gray with slight blue tint
+        Stop[] stops = new Stop[] {
+            new Stop(0, Color.rgb(60, 65, 75)),
+            new Stop(1, Color.rgb(35, 40, 50))
+        };
+        
+        RadialGradient gradient = new RadialGradient(
+            0, 0, 0.4, 0.4, 0.6, true,
+            CycleMethod.NO_CYCLE, stops
+        );
+        
+        gc.setFill(gradient);
+        // Draw rounded shapes instead of squares
+        gc.fillOval(px, py, CELL_SIZE, CELL_SIZE);
+        
+        // Subtle cyan edge
+        gc.setStroke(Color.rgb(0, 140, 160, 0.3));
+        gc.setLineWidth(0.5);
+        gc.strokeOval(px, py, CELL_SIZE, CELL_SIZE);
+    }
+    
     private void drawParticles(GraphicsContext gc) {
         for (Particle particle : board.getAllParticles()) {
-            Position pos = particle.getPosition();
-            
-            // Get color based on team and energy
-            Color color = particle.getTeam().getParticleColor(particle.getEnergyRatio());
-            gc.setFill(color);
-            
-            gc.fillRect(pos.x() * CELL_SIZE, pos.y() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            drawParticle(gc, particle);
         }
     }
     
-    /**
-     * Draws a team's cursor.
-     */
+    private void drawParticle(GraphicsContext gc, Particle particle) {
+        Position pos = particle.getPosition();
+        double px = pos.x() * CELL_SIZE;
+        double py = pos.y() * CELL_SIZE;
+        
+        Color baseColor = particle.getTeam().getBaseColor();
+        double energyRatio = particle.getEnergyRatio();
+        
+        // Soft glow
+        Color glowColor = baseColor.deriveColor(0, 1.0, 1.0 + energyRatio * 0.3, 0.4);
+        gc.setFill(glowColor);
+        gc.fillOval(px - 1.5, py - 1.5, CELL_SIZE + 3, CELL_SIZE + 3);
+        
+        // Main particle with smooth gradient
+        Stop[] stops = new Stop[] {
+            new Stop(0, baseColor.deriveColor(0, 1.0, 0.9 + energyRatio * 0.4, 1.0)),
+            new Stop(1, baseColor.deriveColor(0, 1.0, 0.5 + energyRatio * 0.3, 1.0))
+        };
+        
+        RadialGradient particleGradient = new RadialGradient(
+            0, 0, 0.3, 0.3, 0.6, true,
+            CycleMethod.NO_CYCLE, stops
+        );
+        
+        gc.setFill(particleGradient);
+        gc.fillOval(px, py, CELL_SIZE, CELL_SIZE);
+        
+        // Highlight
+        gc.setFill(Color.WHITE.deriveColor(0, 1, 1, 0.25));
+        gc.fillOval(px + 0.5, py + 0.5, CELL_SIZE / 2.5, CELL_SIZE / 2.5);
+    }
+    
     private void drawCursor(GraphicsContext gc, Team team) {
         Position cursor = team.getTargetPosition();
+        Color color = team.getBaseColor();
         
-        // Draw crosshair
-        gc.setStroke(CURSOR_COLOR);
+        double x = cursor.x() * CELL_SIZE;
+        double y = cursor.y() * CELL_SIZE;
+        
+        // Soft pulsing glow
+        gc.setGlobalAlpha(0.2);
+        gc.setFill(color);
+        gc.fillOval(x - 15, y - 15, 30, 30);
+        gc.setGlobalAlpha(1.0);
+        
+        // Modern crosshair
+        gc.setStroke(color.brighter());
         gc.setLineWidth(2);
         
-        int x = cursor.x() * CELL_SIZE;
-        int y = cursor.y() * CELL_SIZE;
+        // Horizontal lines
+        gc.strokeLine(x - 12, y, x - 5, y);
+        gc.strokeLine(x + 5, y, x + 12, y);
         
-        // Horizontal line
-        gc.strokeLine(x - CURSOR_SIZE, y, x + CURSOR_SIZE, y);
-        // Vertical line
-        gc.strokeLine(x, y - CURSOR_SIZE, x, y + CURSOR_SIZE);
+        // Vertical lines
+        gc.strokeLine(x, y - 12, x, y - 5);
+        gc.strokeLine(x, y + 5, x, y + 12);
         
-        // Draw circle
-        gc.strokeOval(x - CURSOR_SIZE/2, y - CURSOR_SIZE/2, CURSOR_SIZE, CURSOR_SIZE);
+        // Corner brackets
+        gc.strokeLine(x - 10, y - 10, x - 6, y - 10);
+        gc.strokeLine(x - 10, y - 10, x - 10, y - 6);
+        
+        gc.strokeLine(x + 10, y - 10, x + 6, y - 10);
+        gc.strokeLine(x + 10, y - 10, x + 10, y - 6);
+        
+        gc.strokeLine(x - 10, y + 10, x - 6, y + 10);
+        gc.strokeLine(x - 10, y + 10, x - 10, y + 6);
+        
+        gc.strokeLine(x + 10, y + 10, x + 6, y + 10);
+        gc.strokeLine(x + 10, y + 10, x + 10, y + 6);
+        
+        // Center dot
+        gc.setFill(color);
+        gc.fillOval(x - 2, y - 2, 4, 4);
     }
     
-    /**
-     * Draws gradient visualization (for debugging).
-     */
-    private void drawGradient(GraphicsContext gc, Gradient gradient) {
-        if (gradient == null) return;
-        
-        // Find max distance for normalization
-        int maxDist = 0;
-        for (int y = 0; y < gradient.getHeight(); y++) {
-            for (int x = 0; x < gradient.getWidth(); x++) {
-                int dist = gradient.getDistance(x, y);
-                if (dist < Gradient.INFINITE && dist > maxDist) {
-                    maxDist = dist;
-                }
-            }
-        }
-        
-        // Draw gradient as heatmap
-        for (int y = 0; y < gradient.getHeight(); y++) {
-            for (int x = 0; x < gradient.getWidth(); x++) {
-                int dist = gradient.getDistance(x, y);
-                
-                if (dist < Gradient.INFINITE) {
-                    // Normalize to 0.0-1.0
-                    double ratio = maxDist > 0 ? (double) dist / maxDist : 0;
-                    
-                    // Blue (close) to Red (far)
-                    Color color = Color.color(ratio, 0, 1.0 - ratio, 0.3);
-                    gc.setFill(color);
-                    gc.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                }
-            }
-        }
-    }
-    
-    /**
-     * Converts screen coordinates to board position.
-     * 
-     * @param screenX screen X coordinate
-     * @param screenY screen Y coordinate
-     * @return board position
-     */
     public Position screenToBoard(double screenX, double screenY) {
         int x = (int) (screenX / CELL_SIZE);
         int y = (int) (screenY / CELL_SIZE);
         return new Position(x, y);
-    }
-    
-    /**
-     * Converts board position to screen coordinates.
-     * 
-     * @param pos board position
-     * @return array [screenX, screenY]
-     */
-    public double[] boardToScreen(Position pos) {
-        return new double[] {
-            pos.x() * CELL_SIZE,
-            pos.y() * CELL_SIZE
-        };
     }
 }
