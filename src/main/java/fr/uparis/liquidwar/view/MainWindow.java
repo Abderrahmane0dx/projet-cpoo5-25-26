@@ -1,5 +1,6 @@
 package fr.uparis.liquidwar.view;
 
+import fr.uparis.liquidwar.algorithm.AIController;
 import fr.uparis.liquidwar.algorithm.GradientCalculator;
 import fr.uparis.liquidwar.algorithm.ParticleMovement;
 import fr.uparis.liquidwar.model.Board;
@@ -12,6 +13,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -39,6 +41,7 @@ public class MainWindow {
     
     private GradientCalculator gradientCalculator;
     private ParticleMovement particleMovement;
+    private AIController aiController;
     
     private AnimationTimer gameLoop;
     private boolean running = false;
@@ -48,13 +51,26 @@ public class MainWindow {
     private long lastTime = 0;
     private int frameCount = 0;
     
+    private AIController.Difficulty aiDifficulty = AIController.Difficulty.MEDIUM;
+    
     /**
-     * Creates the main game window.
+     * Creates the main game window with default difficulty.
      * 
      * @param stage JavaFX stage
      */
     public MainWindow(Stage stage) {
+        this(stage, AIController.Difficulty.MEDIUM);
+    }
+    
+    /**
+     * Creates the main game window with specified AI difficulty.
+     * 
+     * @param stage JavaFX stage
+     * @param difficulty AI difficulty level
+     */
+    public MainWindow(Stage stage, AIController.Difficulty difficulty) {
         this.stage = stage;
+        this.aiDifficulty = difficulty;
         initializeGame();
         setupUI();
     }
@@ -81,6 +97,9 @@ public class MainWindow {
         gradientCalculator = new GradientCalculator(board);
         particleMovement = new ParticleMovement(board);
         gradients = new HashMap<>();
+        
+        // Initialize AI for team 2 (Blue team)
+        aiController = new AIController(board, team2, team1, aiDifficulty);
         
         // Calculate initial gradients
         updateGradients();
@@ -168,6 +187,49 @@ public class MainWindow {
         resetButton.setPrefWidth(180);
         resetButton.setOnAction(e -> reset());
         
+        // Menu button
+        Button menuButton = new Button("⬅ Menu");
+        menuButton.setPrefWidth(180);
+        menuButton.setStyle("-fx-background-color: #7f8c8d; -fx-text-fill: white;");
+        menuButton.setOnAction(e -> returnToMenu());
+        
+        // AI Difficulty selector
+        Label aiLabel = new Label("AI Difficulty:");
+        aiLabel.setStyle("-fx-font-weight: bold;");
+        
+        ComboBox<String> difficultyBox = new ComboBox<>();
+        difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
+        difficultyBox.setValue("Medium");
+        difficultyBox.setPrefWidth(180);
+        difficultyBox.setOnAction(e -> {
+            String selected = difficultyBox.getValue();
+            AIController.Difficulty diff = switch (selected) {
+                case "Easy" -> AIController.Difficulty.EASY;
+                case "Hard" -> AIController.Difficulty.HARD;
+                default -> AIController.Difficulty.MEDIUM;
+            };
+            aiController.setDifficulty(diff);
+        });
+        
+        // AI Strategy selector
+        Label strategyLabel = new Label("AI Strategy:");
+        strategyLabel.setStyle("-fx-font-weight: bold;");
+        
+        ComboBox<String> strategyBox = new ComboBox<>();
+        strategyBox.getItems().addAll("Balanced", "Aggressive", "Defensive", "Hunt");
+        strategyBox.setValue("Balanced");
+        strategyBox.setPrefWidth(180);
+        strategyBox.setOnAction(e -> {
+            String selected = strategyBox.getValue();
+            AIController.Strategy strat = switch (selected) {
+                case "Aggressive" -> AIController.Strategy.AGGRESSIVE;
+                case "Defensive" -> AIController.Strategy.DEFENSIVE;
+                case "Hunt" -> AIController.Strategy.HUNT;
+                default -> AIController.Strategy.BALANCED;
+            };
+            aiController.setStrategy(strat);
+        });
+        
         statusLabel = new Label("Ready");
         statusLabel.setWrapText(true);
         
@@ -176,7 +238,7 @@ public class MainWindow {
         team1Info.setTextFill(Color.RED);
         team1Info.setStyle("-fx-font-weight: bold;");
         
-        Label team2Info = new Label("Blue Team: " + teams.get(1).getParticleCount());
+        Label team2Info = new Label("Blue Team (AI): " + teams.get(1).getParticleCount());
         team2Info.setTextFill(Color.BLUE);
         team2Info.setStyle("-fx-font-weight: bold;");
         
@@ -185,6 +247,12 @@ public class MainWindow {
             startButton,
             pauseButton,
             resetButton,
+            menuButton,
+            new Label(""),
+            aiLabel,
+            difficultyBox,
+            strategyLabel,
+            strategyBox,
             new Label(""),
             team1Info,
             team2Info,
@@ -206,7 +274,7 @@ public class MainWindow {
         fpsLabel = new Label("FPS: 0");
         fpsLabel.setTextFill(Color.WHITE);
         
-        Label controlsLabel = new Label("Controls: Move mouse to control Red team");
+        Label controlsLabel = new Label("Controls: Move mouse to control Red team | Blue team is AI controlled");
         controlsLabel.setTextFill(Color.WHITE);
         
         statusBar.getChildren().addAll(fpsLabel, controlsLabel);
@@ -234,6 +302,10 @@ public class MainWindow {
      * Updates the game state.
      */
     private void update() {
+        // Update AI for team 2
+        aiController.update();
+        aiController.adaptStrategy(); // Adapt strategy based on game state
+        
         // Update gradients
         updateGradients();
         
@@ -328,5 +400,14 @@ public class MainWindow {
         gamePanel.setBoard(board);
         gamePanel.setGradients(gradients);
         statusLabel.setText("Ready");
+    }
+    
+    /**
+     * Returns to the main menu.
+     */
+    public void returnToMenu() {
+        pause();
+        gameLoop.stop();
+        new MenuWindow(stage);
     }
 }

@@ -1,6 +1,6 @@
 package fr.uparis.liquidwar;
 
-import fr.uparis.liquidwar.view.MainWindow;
+import fr.uparis.liquidwar.view.MenuWindow;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -15,7 +15,7 @@ public class Main extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        new MainWindow(primaryStage);
+        new MenuWindow(primaryStage);
     }
     
     /**
