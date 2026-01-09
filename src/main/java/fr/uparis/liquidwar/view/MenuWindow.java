@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 /**
@@ -45,6 +46,7 @@ public class MenuWindow {
         Label title = new Label("LIQUID WAR");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 48));
         title.setTextFill(Color.WHITE);
+        title.setAlignment(Pos.CENTER);
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.CYAN);
         shadow.setRadius(10);
@@ -54,14 +56,20 @@ public class MenuWindow {
         Label subtitle = new Label("CPOO Project");
         subtitle.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
         subtitle.setTextFill(Color.LIGHTGRAY);
+        subtitle.setAlignment(Pos.CENTER);
         
         // Spacer
         VBox spacer = new VBox();
         spacer.setMinHeight(30);
         
         // Play vs AI button
-        Button playVsAIButton = createMenuButton("🎮  Jouer contre l'IA");
+        Button playVsAIButton = createMenuButton("🤖  Jouer contre l'IA");
         playVsAIButton.setOnAction(e -> showDifficultySelection());
+        
+        // Multiplayer button
+        Button multiplayerButton = createMenuButton("👥  Multijoueur Local");
+        multiplayerButton.setStyle(multiplayerButton.getStyle().replace("#3498db", "#9b59b6"));
+        multiplayerButton.setOnAction(e -> startMultiplayer());
         
         // Quit button
         Button quitButton = createMenuButton("❌  Quitter");
@@ -69,17 +77,26 @@ public class MenuWindow {
         quitButton.setOnAction(e -> stage.close());
         
         // Credits
-        Label credits = new Label("Contrôles: Déplacez la souris pour contrôler l'équipe rouge");
+        Label credits = new Label("Appuyez sur ECHAP pour mettre en pause");
         credits.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
         credits.setTextFill(Color.GRAY);
+        credits.setAlignment(Pos.CENTER);
+        credits.setTextAlignment(TextAlignment.CENTER);
         
-        root.getChildren().addAll(title, subtitle, spacer, playVsAIButton, quitButton, credits);
+        root.getChildren().addAll(title, subtitle, spacer, playVsAIButton, multiplayerButton, quitButton, credits);
         
-        Scene scene = new Scene(root, 500, 450);
+        Scene scene = new Scene(root, 500, 500);
         stage.setScene(scene);
         stage.setTitle("Liquid War - Menu");
         stage.setResizable(false);
         stage.show();
+    }
+    
+    /**
+     * Starts local multiplayer mode.
+     */
+    private void startMultiplayer() {
+        new MainWindow(stage, true);
     }
     
     /**
@@ -95,11 +112,14 @@ public class MenuWindow {
         Label title = new Label("Choisir la difficulté");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 32));
         title.setTextFill(Color.WHITE);
+        title.setAlignment(Pos.CENTER);
         
         // Description
         Label description = new Label("L'IA bleue s'adaptera à votre niveau");
         description.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
         description.setTextFill(Color.LIGHTGRAY);
+        description.setAlignment(Pos.CENTER);
+        description.setTextAlignment(TextAlignment.CENTER);
         
         // Spacer
         VBox spacer = new VBox();
@@ -139,11 +159,14 @@ public class MenuWindow {
         button.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         button.setPrefWidth(300);
         button.setPrefHeight(50);
+        button.setAlignment(Pos.CENTER);
+        button.setTextAlignment(TextAlignment.CENTER);
         button.setStyle(
             "-fx-background-color: #3498db;" +
             "-fx-text-fill: white;" +
             "-fx-background-radius: 10;" +
-            "-fx-cursor: hand;"
+            "-fx-cursor: hand;" +
+            "-fx-alignment: center;"
         );
         
         // Hover effects

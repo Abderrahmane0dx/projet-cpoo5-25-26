@@ -11,27 +11,34 @@ import fr.uparis.liquidwar.model.Team;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Main game window with controls and display.
+ * Main game window with pause menu overlay.
  */
 public class MainWindow {
     private static final int BOARD_WIDTH = 200;
     private static final int BOARD_HEIGHT = 150;
     private static final int PARTICLE_COUNT_PER_TEAM = 500;
+    private static final int CURSOR_SPEED = 3;
     
     private Stage stage;
     private GamePanel gamePanel;
@@ -45,25 +52,25 @@ public class MainWindow {
     
     private AnimationTimer gameLoop;
     private boolean running = false;
+    private boolean paused = false;
     
-    private Label statusLabel;
-    private Label fpsLabel;
-    private long lastTime = 0;
-    private int frameCount = 0;
+    // Game mode
+    private boolean isMultiplayer;
+    private AIController.Difficulty aiDifficulty;
     
-    private AIController.Difficulty aiDifficulty = AIController.Difficulty.MEDIUM;
+    // Pause menu
+    private StackPane rootPane;
+    private VBox pauseMenu;
+    private Rectangle overlay;
+    
+    // Keyboard state for player 2
+    private Set<KeyCode> pressedKeys = new HashSet<>();
+    
+    // Score labels
+    private Label scoreLabel;
     
     /**
-     * Creates the main game window with default difficulty.
-     * 
-     * @param stage JavaFX stage
-     */
-    public MainWindow(Stage stage) {
-        this(stage, AIController.Difficulty.MEDIUM);
-    }
-    
-    /**
-     * Creates the main game window with specified AI difficulty.
+     * Creates the main game window for VS AI mode.
      * 
      * @param stage JavaFX stage
      * @param difficulty AI difficulty level
@@ -71,8 +78,25 @@ public class MainWindow {
     public MainWindow(Stage stage, AIController.Difficulty difficulty) {
         this.stage = stage;
         this.aiDifficulty = difficulty;
+        this.isMultiplayer = false;
         initializeGame();
         setupUI();
+        start(); // Auto-start
+    }
+    
+    /**
+     * Creates the main game window for multiplayer mode.
+     * 
+     * @param stage JavaFX stage
+     * @param multiplayer true for local multiplayer
+     */
+    public MainWindow(Stage stage, boolean multiplayer) {
+        this.stage = stage;
+        this.isMultiplayer = multiplayer;
+        this.aiDifficulty = null;
+        initializeGame();
+        setupUI();
+        start(); // Auto-start
     }
     
     /**
@@ -98,8 +122,12 @@ public class MainWindow {
         particleMovement = new ParticleMovement(board);
         gradients = new HashMap<>();
         
-        // Initialize AI for team 2 (Blue team)
-        aiController = new AIController(board, team2, team1, aiDifficulty);
+        // Initialize AI for team 2 (only in VS AI mode)
+        if (!isMultiplayer && aiDifficulty != null) {
+            aiController = new AIController(board, team2, team1, aiDifficulty);
+        } else {
+            aiController = null;
+        }
         
         // Calculate initial gradients
         updateGradients();
@@ -127,36 +155,61 @@ public class MainWindow {
      * Sets up the user interface.
      */
     private void setupUI() {
-        BorderPane root = new BorderPane();
+        rootPane = new StackPane();
+        
+        // Game content
+        StackPane gameContent = new StackPane();
         
         // Create game panel
         gamePanel = new GamePanel(board);
         gamePanel.setGradients(gradients);
         
-        // Mouse handler for moving cursor
+        // Score overlay at the top
+        scoreLabel = new Label();
+        updateScoreLabel();
+        scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        scoreLabel.setTextFill(Color.WHITE);
+        scoreLabel.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-padding: 5 15; -fx-background-radius: 5;");
+        StackPane.setAlignment(scoreLabel, Pos.TOP_CENTER);
+        StackPane.setMargin(scoreLabel, new Insets(10, 0, 0, 0));
+        
+        gameContent.getChildren().addAll(gamePanel, scoreLabel);
+        
+        // Create pause menu overlay (hidden initially)
+        createPauseMenu();
+        
+        rootPane.getChildren().addAll(gameContent, overlay, pauseMenu);
+        overlay.setVisible(false);
+        pauseMenu.setVisible(false);
+        
+        // Create scene
+        Scene scene = new Scene(rootPane);
+        
+        // Mouse handler for player 1 (red team)
         gamePanel.setOnMouseMoved(event -> {
-            if (teams.size() > 0) {
+            if (running && !paused && teams.size() > 0) {
                 Position pos = gamePanel.screenToBoard(event.getX(), event.getY());
                 if (board.isInBounds(pos)) {
-                    teams.get(0).setTargetPosition(pos); // Player 1 controls with mouse
+                    teams.get(0).setTargetPosition(pos);
                 }
             }
         });
         
-        root.setCenter(gamePanel);
+        // Keyboard handlers
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE && running) {
+                togglePause();
+            } else {
+                pressedKeys.add(event.getCode());
+            }
+        });
         
-        // Control panel
-        VBox controlPanel = createControlPanel();
-        root.setRight(controlPanel);
+        scene.setOnKeyReleased(event -> {
+            pressedKeys.remove(event.getCode());
+        });
         
-        // Status bar
-        HBox statusBar = createStatusBar();
-        root.setBottom(statusBar);
-        
-        // Create scene
-        Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.setTitle("Liquid War - CPOO Project");
+        stage.setTitle("Liquid War - " + (isMultiplayer ? "Multijoueur Local" : "VS IA"));
         stage.setResizable(false);
         stage.show();
         
@@ -165,121 +218,107 @@ public class MainWindow {
     }
     
     /**
-     * Creates the control panel.
+     * Creates the pause menu overlay.
      */
-    private VBox createControlPanel() {
-        VBox panel = new VBox(10);
-        panel.setPadding(new Insets(10));
-        panel.setPrefWidth(200);
+    private void createPauseMenu() {
+        // Semi-transparent overlay
+        overlay = new Rectangle(BOARD_WIDTH * 4, BOARD_HEIGHT * 4);
+        overlay.setFill(Color.rgb(0, 0, 0, 0.7));
         
-        Label title = new Label("Liquid War");
-        title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        // Pause menu container
+        pauseMenu = new VBox(20);
+        pauseMenu.setAlignment(Pos.CENTER);
+        pauseMenu.setPadding(new Insets(30));
+        pauseMenu.setMaxWidth(300);
+        pauseMenu.setMaxHeight(350);
+        pauseMenu.setStyle("-fx-background-color: rgba(30, 30, 50, 0.95); -fx-background-radius: 15;");
         
-        Button startButton = new Button("Start");
-        startButton.setPrefWidth(180);
-        startButton.setOnAction(e -> start());
+        // Title
+        Label pauseTitle = new Label("⏸ PAUSE");
+        pauseTitle.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+        pauseTitle.setTextFill(Color.WHITE);
         
-        Button pauseButton = new Button("Pause");
-        pauseButton.setPrefWidth(180);
-        pauseButton.setOnAction(e -> pause());
+        // Resume button
+        Button resumeButton = createPauseButton("▶ Reprendre", "#27ae60");
+        resumeButton.setOnAction(e -> togglePause());
         
-        Button resetButton = new Button("Reset");
-        resetButton.setPrefWidth(180);
-        resetButton.setOnAction(e -> reset());
+        // Restart button
+        Button restartButton = createPauseButton("🔄 Recommencer", "#3498db");
+        restartButton.setOnAction(e -> {
+            togglePause();
+            reset();
+        });
         
         // Menu button
-        Button menuButton = new Button("⬅ Menu");
-        menuButton.setPrefWidth(180);
-        menuButton.setStyle("-fx-background-color: #7f8c8d; -fx-text-fill: white;");
+        Button menuButton = createPauseButton("🏠 Menu Principal", "#e74c3c");
         menuButton.setOnAction(e -> returnToMenu());
         
-        // AI Difficulty selector
-        Label aiLabel = new Label("AI Difficulty:");
-        aiLabel.setStyle("-fx-font-weight: bold;");
+        // Controls info
+        Label controlsInfo = new Label(isMultiplayer ? 
+            "🔴 Rouge: Souris\n🔵 Bleu: Flèches directionnelles" :
+            "🔴 Rouge: Souris\n🔵 Bleu: IA");
+        controlsInfo.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
+        controlsInfo.setTextFill(Color.LIGHTGRAY);
+        controlsInfo.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        controlsInfo.setAlignment(Pos.CENTER);
         
-        ComboBox<String> difficultyBox = new ComboBox<>();
-        difficultyBox.getItems().addAll("Easy", "Medium", "Hard");
-        difficultyBox.setValue("Medium");
-        difficultyBox.setPrefWidth(180);
-        difficultyBox.setOnAction(e -> {
-            String selected = difficultyBox.getValue();
-            AIController.Difficulty diff = switch (selected) {
-                case "Easy" -> AIController.Difficulty.EASY;
-                case "Hard" -> AIController.Difficulty.HARD;
-                default -> AIController.Difficulty.MEDIUM;
-            };
-            aiController.setDifficulty(diff);
-        });
-        
-        // AI Strategy selector
-        Label strategyLabel = new Label("AI Strategy:");
-        strategyLabel.setStyle("-fx-font-weight: bold;");
-        
-        ComboBox<String> strategyBox = new ComboBox<>();
-        strategyBox.getItems().addAll("Balanced", "Aggressive", "Defensive", "Hunt");
-        strategyBox.setValue("Balanced");
-        strategyBox.setPrefWidth(180);
-        strategyBox.setOnAction(e -> {
-            String selected = strategyBox.getValue();
-            AIController.Strategy strat = switch (selected) {
-                case "Aggressive" -> AIController.Strategy.AGGRESSIVE;
-                case "Defensive" -> AIController.Strategy.DEFENSIVE;
-                case "Hunt" -> AIController.Strategy.HUNT;
-                default -> AIController.Strategy.BALANCED;
-            };
-            aiController.setStrategy(strat);
-        });
-        
-        statusLabel = new Label("Ready");
-        statusLabel.setWrapText(true);
-        
-        // Team info
-        Label team1Info = new Label("Red Team: " + teams.get(0).getParticleCount());
-        team1Info.setTextFill(Color.RED);
-        team1Info.setStyle("-fx-font-weight: bold;");
-        
-        Label team2Info = new Label("Blue Team (AI): " + teams.get(1).getParticleCount());
-        team2Info.setTextFill(Color.BLUE);
-        team2Info.setStyle("-fx-font-weight: bold;");
-        
-        panel.getChildren().addAll(
-            title,
-            startButton,
-            pauseButton,
-            resetButton,
-            menuButton,
-            new Label(""),
-            aiLabel,
-            difficultyBox,
-            strategyLabel,
-            strategyBox,
-            new Label(""),
-            team1Info,
-            team2Info,
-            new Label(""),
-            statusLabel
-        );
-        
-        return panel;
+        pauseMenu.getChildren().addAll(pauseTitle, resumeButton, restartButton, menuButton, controlsInfo);
     }
     
     /**
-     * Creates the status bar.
+     * Creates a styled button for the pause menu.
      */
-    private HBox createStatusBar() {
-        HBox statusBar = new HBox(20);
-        statusBar.setPadding(new Insets(5));
-        statusBar.setStyle("-fx-background-color: #333; -fx-text-fill: white;");
+    private Button createPauseButton(String text, String color) {
+        Button button = new Button(text);
+        button.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        button.setPrefWidth(220);
+        button.setPrefHeight(45);
+        button.setAlignment(Pos.CENTER);
+        button.setStyle(
+            "-fx-background-color: " + color + ";" +
+            "-fx-text-fill: white;" +
+            "-fx-background-radius: 8;" +
+            "-fx-cursor: hand;" +
+            "-fx-alignment: center;"
+        );
         
-        fpsLabel = new Label("FPS: 0");
-        fpsLabel.setTextFill(Color.WHITE);
+        button.setOnMouseEntered(e -> {
+            button.setScaleX(1.05);
+            button.setScaleY(1.05);
+        });
         
-        Label controlsLabel = new Label("Controls: Move mouse to control Red team | Blue team is AI controlled");
-        controlsLabel.setTextFill(Color.WHITE);
+        button.setOnMouseExited(e -> {
+            button.setScaleX(1.0);
+            button.setScaleY(1.0);
+        });
         
-        statusBar.getChildren().addAll(fpsLabel, controlsLabel);
+        return button;
+    }
+    
+    /**
+     * Toggles the pause state.
+     */
+    private void togglePause() {
+        paused = !paused;
+        overlay.setVisible(paused);
+        pauseMenu.setVisible(paused);
         
-        return statusBar;
+        if (paused) {
+            // Apply blur to game panel
+            gamePanel.setEffect(new GaussianBlur(5));
+        } else {
+            gamePanel.setEffect(null);
+        }
+    }
+    
+    /**
+     * Updates the score label.
+     */
+    private void updateScoreLabel() {
+        int redCount = teams.get(0).getParticleCount();
+        int blueCount = teams.get(1).getParticleCount();
+        String modeText = isMultiplayer ? "LOCAL" : "VS IA";
+        scoreLabel.setText("🔴 " + redCount + "  |  " + modeText + "  |  " + blueCount + " 🔵");
     }
     
     /**
@@ -289,10 +328,9 @@ public class MainWindow {
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (running) {
+                if (running && !paused) {
                     update();
                     render();
-                    updateFPS(now);
                 }
             }
         };
@@ -302,9 +340,13 @@ public class MainWindow {
      * Updates the game state.
      */
     private void update() {
-        // Update AI for team 2
-        aiController.update();
-        aiController.adaptStrategy(); // Adapt strategy based on game state
+        // Update player 2 based on mode
+        if (isMultiplayer) {
+            updatePlayer2Keyboard();
+        } else if (aiController != null) {
+            aiController.update();
+            aiController.adaptStrategy();
+        }
         
         // Update gradients
         updateGradients();
@@ -317,8 +359,45 @@ public class MainWindow {
             }
         }
         
+        // Update score
+        Platform.runLater(this::updateScoreLabel);
+        
         // Check win condition
         checkWinCondition();
+    }
+    
+    /**
+     * Updates player 2 cursor based on keyboard input.
+     */
+    private void updatePlayer2Keyboard() {
+        if (teams.size() < 2) return;
+        
+        Team team2 = teams.get(1);
+        Position current = team2.getTargetPosition();
+        int newX = current.x();
+        int newY = current.y();
+        
+        if (pressedKeys.contains(KeyCode.UP)) {
+            newY -= CURSOR_SPEED;
+        }
+        if (pressedKeys.contains(KeyCode.DOWN)) {
+            newY += CURSOR_SPEED;
+        }
+        if (pressedKeys.contains(KeyCode.LEFT)) {
+            newX -= CURSOR_SPEED;
+        }
+        if (pressedKeys.contains(KeyCode.RIGHT)) {
+            newX += CURSOR_SPEED;
+        }
+        
+        // Clamp to board bounds
+        newX = Math.max(1, Math.min(board.getWidth() - 2, newX));
+        newY = Math.max(1, Math.min(board.getHeight() - 2, newY));
+        
+        Position newPos = new Position(newX, newY);
+        if (board.isInBounds(newPos)) {
+            team2.setTargetPosition(newPos);
+        }
     }
     
     /**
@@ -339,39 +418,96 @@ public class MainWindow {
     }
     
     /**
-     * Updates FPS counter.
-     */
-    private void updateFPS(long now) {
-        if (lastTime == 0) {
-            lastTime = now;
-            return;
-        }
-        
-        frameCount++;
-        long elapsed = now - lastTime;
-        
-        if (elapsed >= 1_000_000_000) { // 1 second
-            int fps = (int) ((frameCount * 1_000_000_000.0) / elapsed);
-            Platform.runLater(() -> fpsLabel.setText("FPS: " + fps));
-            frameCount = 0;
-            lastTime = now;
-        }
-    }
-    
-    /**
      * Checks if a team has won.
      */
     private void checkWinCondition() {
         int team1Count = teams.get(0).getParticleCount();
         int team2Count = teams.get(1).getParticleCount();
         
-        if (team1Count == 0) {
-            pause();
-            Platform.runLater(() -> statusLabel.setText("Blue Team Wins!"));
-        } else if (team2Count == 0) {
-            pause();
-            Platform.runLater(() -> statusLabel.setText("Red Team Wins!"));
+        if (team1Count == 0 || team2Count == 0) {
+            running = false;
+            String winner = team1Count == 0 ? "🔵 BLEU GAGNE!" : "🔴 ROUGE GAGNE!";
+            Platform.runLater(() -> showGameOver(winner));
         }
+    }
+    
+    /**
+     * Shows game over screen.
+     */
+    private void showGameOver(String winner) {
+        overlay.setVisible(true);
+        pauseMenu.setVisible(true);
+        gamePanel.setEffect(new GaussianBlur(5));
+        
+        // Update pause menu for game over
+        pauseMenu.getChildren().clear();
+        
+        Label gameOverTitle = new Label("🏆 FIN DE PARTIE");
+        gameOverTitle.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        gameOverTitle.setTextFill(Color.GOLD);
+        gameOverTitle.setAlignment(Pos.CENTER);
+        
+        Label winnerLabel = new Label(winner);
+        winnerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        winnerLabel.setTextFill(Color.WHITE);
+        winnerLabel.setAlignment(Pos.CENTER);
+        
+        Button restartButton = createPauseButton("🔄 Rejouer", "#27ae60");
+        restartButton.setOnAction(e -> {
+            // Hide overlay and menu
+            overlay.setVisible(false);
+            pauseMenu.setVisible(false);
+            gamePanel.setEffect(null);
+            
+            // Recreate pause menu with correct content
+            pauseMenu.getChildren().clear();
+            rebuildPauseMenuContent();
+            
+            // Reset and start game
+            reset();
+        });
+        
+        Button menuButton = createPauseButton("🏠 Menu Principal", "#3498db");
+        menuButton.setOnAction(e -> returnToMenu());
+        
+        pauseMenu.getChildren().addAll(gameOverTitle, winnerLabel, restartButton, menuButton);
+    }
+    
+    /**
+     * Rebuilds the pause menu content (without recreating overlay).
+     */
+    private void rebuildPauseMenuContent() {
+        // Title
+        Label pauseTitle = new Label("⏸ PAUSE");
+        pauseTitle.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+        pauseTitle.setTextFill(Color.WHITE);
+        pauseTitle.setAlignment(Pos.CENTER);
+        
+        // Resume button
+        Button resumeButton = createPauseButton("▶ Reprendre", "#27ae60");
+        resumeButton.setOnAction(e -> togglePause());
+        
+        // Restart button
+        Button restartBtn = createPauseButton("🔄 Recommencer", "#3498db");
+        restartBtn.setOnAction(e -> {
+            togglePause();
+            reset();
+        });
+        
+        // Menu button
+        Button menuBtn = createPauseButton("🏠 Menu Principal", "#e74c3c");
+        menuBtn.setOnAction(e -> returnToMenu());
+        
+        // Controls info
+        Label controlsInfo = new Label(isMultiplayer ? 
+            "🔴 Rouge: Souris\n🔵 Bleu: Flèches directionnelles" :
+            "🔴 Rouge: Souris\n🔵 Bleu: IA");
+        controlsInfo.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
+        controlsInfo.setTextFill(Color.LIGHTGRAY);
+        controlsInfo.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        controlsInfo.setAlignment(Pos.CENTER);
+        
+        pauseMenu.getChildren().addAll(pauseTitle, resumeButton, restartBtn, menuBtn, controlsInfo);
     }
     
     /**
@@ -379,34 +515,28 @@ public class MainWindow {
      */
     public void start() {
         running = true;
+        paused = false;
         gameLoop.start();
-        statusLabel.setText("Running...");
-    }
-    
-    /**
-     * Pauses the game.
-     */
-    public void pause() {
-        running = false;
-        statusLabel.setText("Paused");
     }
     
     /**
      * Resets the game.
      */
     public void reset() {
-        pause();
+        running = false;
+        paused = false;
         initializeGame();
         gamePanel.setBoard(board);
         gamePanel.setGradients(gradients);
-        statusLabel.setText("Ready");
+        updateScoreLabel();
+        start();
     }
     
     /**
      * Returns to the main menu.
      */
     public void returnToMenu() {
-        pause();
+        running = false;
         gameLoop.stop();
         new MenuWindow(stage);
     }
