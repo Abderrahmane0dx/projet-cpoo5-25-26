@@ -12,31 +12,20 @@ import java.util.Random;
  * AI Controller for automated team movement.
  * Controls the cursor position for a team to maximize particle capture.
  * 
- * Strategies:
- * - AGGRESSIVE: Move towards the center of enemy particles
- * - DEFENSIVE: Move away from enemies, protect own particles
- * - BALANCED: Mix of offensive and defensive moves
- * - HUNT: Target the weakest enemy cluster
+ * Difficulty levels determine the strategy:
+ * - EASY: Defensive, slow updates, random movements
+ * - MEDIUM: Balanced strategy, moderate updates
+ * - HARD: Aggressive and adaptive, fast updates
  */
 public class AIController {
     
     /**
-     * AI difficulty levels affecting decision quality.
+     * AI difficulty levels affecting decision quality and strategy.
      */
     public enum Difficulty {
-        EASY,    // Random movements, slow updates
-        MEDIUM,  // Basic strategy, moderate updates
-        HARD     // Optimal strategy, fast updates
-    }
-    
-    /**
-     * AI strategy types.
-     */
-    public enum Strategy {
-        AGGRESSIVE,  // Always attack
-        DEFENSIVE,   // Protect own particles
-        BALANCED,    // Mix of both
-        HUNT         // Target weakest cluster
+        EASY,    // Defensive, slow updates
+        MEDIUM,  // Balanced, moderate updates
+        HARD     // Aggressive/adaptive, fast updates
     }
     
     private final Board board;
@@ -45,7 +34,6 @@ public class AIController {
     private final Random random;
     
     private Difficulty difficulty;
-    private Strategy strategy;
     
     private int updateCounter = 0;
     private int updateFrequency; // How often to recalculate (in frames)
@@ -69,7 +57,6 @@ public class AIController {
         this.enemyTeam = enemyTeam;
         this.random = new Random();
         this.difficulty = difficulty;
-        this.strategy = Strategy.BALANCED;
         this.lastTargetPosition = controlledTeam.getTargetPosition();
         
         setDifficultyParameters();
@@ -127,52 +114,42 @@ public class AIController {
     }
     
     /**
-     * Calculates the best target position based on current strategy.
+     * Calculates the best target position based on difficulty.
      * 
      * @return optimal cursor position
      */
     private Position calculateTargetPosition() {
-        return switch (strategy) {
-            case AGGRESSIVE -> calculateAggressiveTarget();
-            case DEFENSIVE -> calculateDefensiveTarget();
-            case BALANCED -> calculateBalancedTarget();
-            case HUNT -> calculateHuntTarget();
+        return switch (difficulty) {
+            case EASY -> calculateEasyTarget();
+            case MEDIUM -> calculateMediumTarget();
+            case HARD -> calculateHardTarget();
         };
     }
     
     /**
-     * Aggressive strategy: Target center of enemy particles.
+     * EASY: Defensive strategy - stay near own particles with some randomness.
      */
-    private Position calculateAggressiveTarget() {
-        List<Particle> enemyParticles = enemyTeam.getParticles();
-        
-        if (enemyParticles.isEmpty()) {
-            return lastTargetPosition;
-        }
-        
-        // Calculate center of mass of enemy particles
-        return calculateCenterOfMass(enemyParticles);
-    }
-    
-    /**
-     * Defensive strategy: Stay near own particles' center.
-     */
-    private Position calculateDefensiveTarget() {
+    private Position calculateEasyTarget() {
         List<Particle> ownParticles = controlledTeam.getParticles();
         
         if (ownParticles.isEmpty()) {
             return lastTargetPosition;
         }
         
-        // Calculate center of mass of own particles
-        return calculateCenterOfMass(ownParticles);
+        // Calculate center of mass of own particles (defensive)
+        Position ownCenter = calculateCenterOfMass(ownParticles);
+        
+        // Add randomness for easy mode
+        int randomX = ownCenter.x() + random.nextInt(21) - 10;
+        int randomY = ownCenter.y() + random.nextInt(21) - 10;
+        
+        return clampToBoard(new Position(randomX, randomY));
     }
     
     /**
-     * Balanced strategy: Mix of offensive and defensive.
-     * Considers both team positions and current advantage.
+     * MEDIUM: Balanced strategy - mix of offensive and defensive.
      */
-    private Position calculateBalancedTarget() {
+    private Position calculateMediumTarget() {
         List<Particle> ownParticles = controlledTeam.getParticles();
         List<Particle> enemyParticles = enemyTeam.getParticles();
         
@@ -186,21 +163,14 @@ public class AIController {
         // Calculate advantage ratio
         double ratio = (double) ownParticles.size() / enemyParticles.size();
         
-        // If winning, be more aggressive
-        // If losing, be more defensive
+        // If winning, be more aggressive; if losing, be more defensive
         double aggressiveness;
         if (ratio > 1.2) {
-            aggressiveness = 0.8; // Very aggressive when winning
+            aggressiveness = 0.7;
         } else if (ratio < 0.8) {
-            aggressiveness = 0.3; // Defensive when losing
+            aggressiveness = 0.3;
         } else {
-            aggressiveness = 0.5; // Balanced
-        }
-        
-        // Add some randomness based on difficulty
-        if (difficulty == Difficulty.EASY) {
-            aggressiveness += (random.nextDouble() - 0.5) * 0.4;
-            aggressiveness = Math.max(0.1, Math.min(0.9, aggressiveness));
+            aggressiveness = 0.5;
         }
         
         // Interpolate between defensive and aggressive position
@@ -211,28 +181,47 @@ public class AIController {
     }
     
     /**
-     * Hunt strategy: Target the weakest/isolated enemy cluster.
+     * HARD: Aggressive and adaptive - targets enemies intelligently.
      */
-    private Position calculateHuntTarget() {
+    private Position calculateHardTarget() {
+        List<Particle> ownParticles = controlledTeam.getParticles();
         List<Particle> enemyParticles = enemyTeam.getParticles();
         
         if (enemyParticles.isEmpty()) {
             return lastTargetPosition;
         }
         
-        // Find the most isolated enemy particle (furthest from enemy center)
+        if (ownParticles.isEmpty()) {
+            return lastTargetPosition;
+        }
+        
+        double ratio = (double) ownParticles.size() / enemyParticles.size();
+        
+        // Winning big - hunt isolated enemies
+        if (ratio > 1.5) {
+            return calculateHuntTarget(enemyParticles);
+        }
+        
+        // Otherwise aggressive - go for enemy center
+        Position enemyCenter = calculateCenterOfMass(enemyParticles);
+        return clampToBoard(enemyCenter);
+    }
+    
+    /**
+     * Hunt strategy: Target the weakest/isolated enemy particle.
+     */
+    private Position calculateHuntTarget(List<Particle> enemyParticles) {
         Position enemyCenter = calculateCenterOfMass(enemyParticles);
         
         Particle weakestTarget = null;
-        double maxDistance = 0;
+        double maxWeakness = 0;
         
         for (Particle p : enemyParticles) {
             double dist = p.getPosition().euclideanDistance(enemyCenter);
-            // Also consider low energy as weakness
             double weakness = dist + (100 - p.getEnergy()) * 0.5;
             
-            if (weakness > maxDistance) {
-                maxDistance = weakness;
+            if (weakness > maxWeakness) {
+                maxWeakness = weakness;
                 weakestTarget = p;
             }
         }
@@ -292,39 +281,14 @@ public class AIController {
     }
     
     /**
-     * Ensures position is within board bounds and not on obstacle.
+     * Ensures position is within board bounds.
+     * The cursor can traverse obstacles, so no obstacle check is needed.
      */
     private Position clampToBoard(Position pos) {
         int x = Math.max(1, Math.min(board.getWidth() - 2, pos.x()));
         int y = Math.max(1, Math.min(board.getHeight() - 2, pos.y()));
         
-        // If position is on obstacle, find nearest free cell
-        if (board.isObstacle(x, y)) {
-            Position free = findNearestFreeCell(x, y);
-            if (free != null) {
-                return free;
-            }
-        }
-        
         return new Position(x, y);
-    }
-    
-    /**
-     * Finds nearest cell that is not an obstacle.
-     */
-    private Position findNearestFreeCell(int x, int y) {
-        for (int radius = 1; radius < 20; radius++) {
-            for (int dx = -radius; dx <= radius; dx++) {
-                for (int dy = -radius; dy <= radius; dy++) {
-                    int nx = x + dx;
-                    int ny = y + dy;
-                    if (board.isInBounds(nx, ny) && !board.isObstacle(nx, ny)) {
-                        return new Position(nx, ny);
-                    }
-                }
-            }
-        }
-        return null;
     }
     
     // === Getters and Setters ===
@@ -338,44 +302,7 @@ public class AIController {
         setDifficultyParameters();
     }
     
-    public Strategy getStrategy() {
-        return strategy;
-    }
-    
-    public void setStrategy(Strategy strategy) {
-        this.strategy = strategy;
-    }
-    
     public Team getControlledTeam() {
         return controlledTeam;
-    }
-    
-    /**
-     * Dynamically adjusts strategy based on game state.
-     * Call this periodically for adaptive AI behavior.
-     */
-    public void adaptStrategy() {
-        int ownCount = controlledTeam.getParticleCount();
-        int enemyCount = enemyTeam.getParticleCount();
-        
-        if (ownCount == 0 || enemyCount == 0) {
-            return;
-        }
-        
-        double ratio = (double) ownCount / enemyCount;
-        
-        if (ratio > 1.5) {
-            // Winning big - hunt down remaining enemies
-            strategy = Strategy.HUNT;
-        } else if (ratio > 1.1) {
-            // Slightly winning - stay aggressive
-            strategy = Strategy.AGGRESSIVE;
-        } else if (ratio < 0.6) {
-            // Losing badly - defensive
-            strategy = Strategy.DEFENSIVE;
-        } else {
-            // Close game - balanced
-            strategy = Strategy.BALANCED;
-        }
     }
 }

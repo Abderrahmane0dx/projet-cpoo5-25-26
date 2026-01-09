@@ -63,16 +63,16 @@ public class MenuWindow {
         spacer.setMinHeight(30);
         
         // Play vs AI button
-        Button playVsAIButton = createMenuButton("🤖  Jouer contre l'IA");
+        Button playVsAIButton = createMenuButton("Jouer contre l'IA");
         playVsAIButton.setOnAction(e -> showDifficultySelection());
         
         // Multiplayer button
-        Button multiplayerButton = createMenuButton("👥  Multijoueur Local");
+        Button multiplayerButton = createMenuButton("Multijoueur Local");
         multiplayerButton.setStyle(multiplayerButton.getStyle().replace("#3498db", "#9b59b6"));
         multiplayerButton.setOnAction(e -> startMultiplayer());
         
         // Quit button
-        Button quitButton = createMenuButton("❌  Quitter");
+        Button quitButton = createMenuButton("Quitter");
         quitButton.setStyle(quitButton.getStyle() + "-fx-background-color: #c0392b;");
         quitButton.setOnAction(e -> stage.close());
         
@@ -126,22 +126,22 @@ public class MenuWindow {
         spacer.setMinHeight(20);
         
         // Easy button
-        Button easyButton = createDifficultyButton("🟢  Facile", "IA lente, stratégie basique");
+        Button easyButton = createDifficultyButton("Facile", "IA lente, strategie basique");
         easyButton.setStyle(easyButton.getStyle() + "-fx-background-color: #27ae60;");
         easyButton.setOnAction(e -> startGame(AIController.Difficulty.EASY));
         
         // Medium button
-        Button mediumButton = createDifficultyButton("🟡  Moyen", "IA équilibrée");
+        Button mediumButton = createDifficultyButton("Moyen", "IA equilibree");
         mediumButton.setStyle(mediumButton.getStyle() + "-fx-background-color: #f39c12;");
         mediumButton.setOnAction(e -> startGame(AIController.Difficulty.MEDIUM));
         
         // Hard button
-        Button hardButton = createDifficultyButton("🔴  Difficile", "IA rapide et agressive");
+        Button hardButton = createDifficultyButton("Difficile", "IA rapide et agressive");
         hardButton.setStyle(hardButton.getStyle() + "-fx-background-color: #c0392b;");
         hardButton.setOnAction(e -> startGame(AIController.Difficulty.HARD));
         
         // Back button
-        Button backButton = createMenuButton("⬅  Retour");
+        Button backButton = createMenuButton("Retour");
         backButton.setStyle(backButton.getStyle() + "-fx-background-color: #7f8c8d;");
         backButton.setOnAction(e -> setupMenu());
         

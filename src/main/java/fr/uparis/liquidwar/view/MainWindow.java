@@ -234,29 +234,29 @@ public class MainWindow {
         pauseMenu.setStyle("-fx-background-color: rgba(30, 30, 50, 0.95); -fx-background-radius: 15;");
         
         // Title
-        Label pauseTitle = new Label("⏸ PAUSE");
+        Label pauseTitle = new Label("PAUSE");
         pauseTitle.setFont(Font.font("Arial", FontWeight.BOLD, 36));
         pauseTitle.setTextFill(Color.WHITE);
         
         // Resume button
-        Button resumeButton = createPauseButton("▶ Reprendre", "#27ae60");
+        Button resumeButton = createPauseButton("Reprendre", "#27ae60");
         resumeButton.setOnAction(e -> togglePause());
         
         // Restart button
-        Button restartButton = createPauseButton("🔄 Recommencer", "#3498db");
+        Button restartButton = createPauseButton("Recommencer", "#3498db");
         restartButton.setOnAction(e -> {
             togglePause();
             reset();
         });
         
         // Menu button
-        Button menuButton = createPauseButton("🏠 Menu Principal", "#e74c3c");
+        Button menuButton = createPauseButton("Menu Principal", "#e74c3c");
         menuButton.setOnAction(e -> returnToMenu());
         
         // Controls info
         Label controlsInfo = new Label(isMultiplayer ? 
-            "🔴 Rouge: Souris\n🔵 Bleu: Flèches directionnelles" :
-            "🔴 Rouge: Souris\n🔵 Bleu: IA");
+            "Rouge: Souris\nBleu: Fleches directionnelles" :
+            "Rouge: Souris\nBleu: IA");
         controlsInfo.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
         controlsInfo.setTextFill(Color.LIGHTGRAY);
         controlsInfo.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
@@ -318,7 +318,7 @@ public class MainWindow {
         int redCount = teams.get(0).getParticleCount();
         int blueCount = teams.get(1).getParticleCount();
         String modeText = isMultiplayer ? "LOCAL" : "VS IA";
-        scoreLabel.setText("🔴 " + redCount + "  |  " + modeText + "  |  " + blueCount + " 🔵");
+        scoreLabel.setText("Rouge: " + redCount + "  |  " + modeText + "  |  Bleu: " + blueCount);
     }
     
     /**
@@ -345,7 +345,6 @@ public class MainWindow {
             updatePlayer2Keyboard();
         } else if (aiController != null) {
             aiController.update();
-            aiController.adaptStrategy();
         }
         
         // Update gradients
@@ -426,7 +425,7 @@ public class MainWindow {
         
         if (team1Count == 0 || team2Count == 0) {
             running = false;
-            String winner = team1Count == 0 ? "🔵 BLEU GAGNE!" : "🔴 ROUGE GAGNE!";
+            String winner = team1Count == 0 ? "BLEU GAGNE!" : "ROUGE GAGNE!";
             Platform.runLater(() -> showGameOver(winner));
         }
     }
@@ -442,7 +441,7 @@ public class MainWindow {
         // Update pause menu for game over
         pauseMenu.getChildren().clear();
         
-        Label gameOverTitle = new Label("🏆 FIN DE PARTIE");
+        Label gameOverTitle = new Label("FIN DE PARTIE");
         gameOverTitle.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         gameOverTitle.setTextFill(Color.GOLD);
         gameOverTitle.setAlignment(Pos.CENTER);
@@ -452,7 +451,7 @@ public class MainWindow {
         winnerLabel.setTextFill(Color.WHITE);
         winnerLabel.setAlignment(Pos.CENTER);
         
-        Button restartButton = createPauseButton("🔄 Rejouer", "#27ae60");
+        Button restartButton = createPauseButton("Rejouer", "#27ae60");
         restartButton.setOnAction(e -> {
             // Hide overlay and menu
             overlay.setVisible(false);
@@ -467,7 +466,7 @@ public class MainWindow {
             reset();
         });
         
-        Button menuButton = createPauseButton("🏠 Menu Principal", "#3498db");
+        Button menuButton = createPauseButton("Menu Principal", "#3498db");
         menuButton.setOnAction(e -> returnToMenu());
         
         pauseMenu.getChildren().addAll(gameOverTitle, winnerLabel, restartButton, menuButton);
@@ -478,30 +477,30 @@ public class MainWindow {
      */
     private void rebuildPauseMenuContent() {
         // Title
-        Label pauseTitle = new Label("⏸ PAUSE");
+        Label pauseTitle = new Label("PAUSE");
         pauseTitle.setFont(Font.font("Arial", FontWeight.BOLD, 36));
         pauseTitle.setTextFill(Color.WHITE);
         pauseTitle.setAlignment(Pos.CENTER);
         
         // Resume button
-        Button resumeButton = createPauseButton("▶ Reprendre", "#27ae60");
+        Button resumeButton = createPauseButton("Reprendre", "#27ae60");
         resumeButton.setOnAction(e -> togglePause());
         
         // Restart button
-        Button restartBtn = createPauseButton("🔄 Recommencer", "#3498db");
+        Button restartBtn = createPauseButton("Recommencer", "#3498db");
         restartBtn.setOnAction(e -> {
             togglePause();
             reset();
         });
         
         // Menu button
-        Button menuBtn = createPauseButton("🏠 Menu Principal", "#e74c3c");
+        Button menuBtn = createPauseButton("Menu Principal", "#e74c3c");
         menuBtn.setOnAction(e -> returnToMenu());
         
         // Controls info
         Label controlsInfo = new Label(isMultiplayer ? 
-            "🔴 Rouge: Souris\n🔵 Bleu: Flèches directionnelles" :
-            "🔴 Rouge: Souris\n🔵 Bleu: IA");
+            "Rouge: Souris\nBleu: Fleches directionnelles" :
+            "Rouge: Souris\nBleu: IA");
         controlsInfo.setFont(Font.font("Arial", FontWeight.NORMAL, 12));
         controlsInfo.setTextFill(Color.LIGHTGRAY);
         controlsInfo.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
